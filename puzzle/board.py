@@ -14,18 +14,29 @@ class Board:
         row = index // 4
         column = index % 4
 
-        blank_index= self.find_blank()
-        row_blank = blank_index //4
-        column_blank = blank_index % 4
+        index_blank= self.find_blank()
+        row_blank = index_blank //4
+        column_blank = index_blank % 4
 
-        if(row == row_blank)and(abs(column-column_blank)==1):
+        if (row == row_blank)and(abs(column-column_blank)==1):
             return True
-        elif(column == column_blank)and(abs(row-row_blank)==1):
+        elif (column == column_blank)and(abs(row-row_blank)==1):
             return True
-        else: 
+        else : 
+            return False
+
+    def move(self, index):
+        index_blank = self.find_blank()
+        if self.is_adjacent(index):
+            self.tiles[index], self.tiles[index_blank] = self.tiles[index_blank], self.tiles[index]
+            return True
+        else :
             return False
     
+    
 board = Board()
-print((board.is_adjacent(14)))
+print((board.move(14)))
+print(board.tiles)
+print(board.move(0))
 
 
