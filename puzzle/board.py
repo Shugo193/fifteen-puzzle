@@ -7,7 +7,10 @@ class Board:
     def is_solved(self):
         return self.tiles == SOLVED
 
+    def find_blank(self):
+        return self.tiles.index(0)
     
 board = Board()
-print(board.is_solved())
+board.tiles[4],  board.tiles[15]= board.tiles[15],  board.tiles[4]
+print(board.find_blank())
 
