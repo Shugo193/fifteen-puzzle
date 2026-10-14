@@ -1,4 +1,6 @@
+import random
 SOLVED = list(range(1,16)) + [0]
+
 
 class Board:
     def __init__(self):
@@ -32,11 +34,25 @@ class Board:
             return True
         else :
             return False
+
+    def shuffle(self):
+        count = 0
+        while True:
+            index_move = random.randint(0, 15)
+            if self.move(index_move):
+                count += 1
+            if count >=100 :
+                break
+
+
+
+
+    
     
     
 board = Board()
-print((board.move(14)))
+board.shuffle()
 print(board.tiles)
-print(board.move(0))
+print(board.is_solved())
 
 
