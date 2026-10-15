@@ -35,21 +35,18 @@ class Board:
         else :
             return False
 
-    def shuffle(self):
+    def shuffle(self, moves=200):
         count = 0
-        while True:
+        index_former_blank = None
+        while count < moves:
+            index_blank = self.find_blank()
             index_move = random.randint(0, 15)
+            if index_move == index_former_blank:
+                continue
             if self.move(index_move):
-                count += 1
-            if count >=100 :
-                break
+                index_former_blank = index_blank
+                count += 1        
 
-
-
-
-    
-    
-    
 board = Board()
 board.shuffle()
 print(board.tiles)
