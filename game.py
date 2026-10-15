@@ -14,6 +14,7 @@ def main():
     clock = pygame.time.Clock()
 
     board = Board()
+    board.shuffle()
     while True:
         screen.fill((0,0,0))
 
@@ -35,6 +36,13 @@ def main():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
+
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    row_select = event.pos[1] // TILE_SIZE
+                    column_select = event.pos[0] // TILE_SIZE
+                    index_select = 4 * row_select + column_select
+                    board.move(index_select)
         clock.tick(60)
 
 
