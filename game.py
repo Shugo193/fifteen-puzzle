@@ -14,7 +14,7 @@ def main():
     clock = pygame.time.Clock()
 
     board = Board()
-    board.shuffle()
+    board.shuffle(5)
     while True:
         screen.fill((0,0,0))
 
@@ -30,6 +30,11 @@ def main():
                 text_rect = text.get_rect(center = rect.center)
                 screen.blit(text, text_rect)
 
+        if board.is_solved():
+            text_clear = font.render("CLEAR!", True, (255, 0, 0))
+            text_clear_rect = text_clear.get_rect(center = screen.get_rect().center)
+            screen.blit(text_clear, text_clear_rect)
+    
         pygame.display.update()
 
         for event in pygame.event.get():
