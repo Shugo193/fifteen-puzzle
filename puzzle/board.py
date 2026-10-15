@@ -46,10 +46,4 @@ class Board:
             if self.move(index_move):
                 index_former_blank = index_blank
                 count += 1        
-
-board = Board()
-board.shuffle()
-print(board.tiles)
-print(board.is_solved())
-
-
+                
