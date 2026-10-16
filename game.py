@@ -17,6 +17,14 @@ def reset_game():
 
     return board, moves, time_start, time_clear, history_blank
 
+def pos_topleft(i):
+    row = i // 4
+    column = i % 4
+    x_topleft = TILE_SIZE*column+GAP//2
+    y_topleft = TILE_SIZE*row+GAP//2+HEADER
+
+    return x_topleft, y_topleft
+
 
 def main():
     pygame.init()
@@ -35,9 +43,8 @@ def main():
             number = board.tiles[i]
             if number != 0:
                 text = font.render(str(number), True, (0, 0, 0))
-                row = i // 4
-                column = i % 4
-                rect = pygame.Rect(TILE_SIZE*column+GAP//2,TILE_SIZE*row+GAP//2+HEADER, TILE_SIZE-GAP, TILE_SIZE-GAP)
+                x,y = pos_topleft(i)
+                rect = pygame.Rect(x,y, TILE_SIZE-GAP, TILE_SIZE-GAP)
                 pygame.draw.rect(screen, (255,255,255), rect)
 
                 text_rect = text.get_rect(center = rect.center)
