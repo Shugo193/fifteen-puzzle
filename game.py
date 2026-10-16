@@ -1,6 +1,8 @@
 import pygame
 import sys
 from puzzle.board import Board
+from pathlib import Path
+ASSETS = Path(__file__).parent/"assets"
 TILE_SIZE = 100
 GAP = 4
 HEADER = 60
@@ -17,7 +19,7 @@ def pos_topleft(i):
 
 def reset_game():
     board = Board()
-    board.shuffle()
+    board.shuffle(1)
     moves = 0
     time_start = pygame.time.get_ticks()
     time_clear = None
@@ -34,6 +36,11 @@ def reset_game():
 
 def main():
     pygame.init()
+
+    sound_slide = pygame.mixer.Sound(ASSETS/"slide.wav")
+    sound_undo = pygame.mixer.Sound(ASSETS/"undo.wav")
+    sound_clear = pygame.mixer.Sound(ASSETS/"clear.wav")
+
     screen = pygame.display.set_mode((WINDOW_SIZE, WINDOW_SIZE+HEADER))
     pygame.display.set_caption("fifteen-puzzle")
     font = pygame.font.SysFont(None, 50)
@@ -81,6 +88,7 @@ def main():
 
             if time_clear is None:
                 time_clear = time_passed
+                sound_clear.play()
 
         if time_clear is None:
             text_time = font.render(f"time:{time_passed}", True, (255, 255, 255))
@@ -106,6 +114,7 @@ def main():
                             index_select = 4 * row_select + column_select
                             former_blank = board.find_blank()
                             if board.move(index_select):
+                                sound_slide.play()
                                 history_blank.append(former_blank)
                                 moves += 1
 
@@ -116,6 +125,7 @@ def main():
                 if time_clear is None:
                     if event.key == pygame.K_z:
                         if history_blank:
+                            sound_undo.play()
                             board.move(history_blank.pop())
                             moves -= 1
         clock.tick(60)
