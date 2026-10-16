@@ -6,6 +6,17 @@ GAP = 4
 HEADER = 60
 WINDOW_SIZE = TILE_SIZE *4
 
+
+def reset_game():
+    board = Board()
+    board.shuffle()
+    moves = 0
+    time_start = pygame.time.get_ticks()
+    time_clear = None
+
+    return board, moves, time_start, time_clear
+
+
 def main():
     pygame.init()
     screen = pygame.display.set_mode((WINDOW_SIZE, WINDOW_SIZE+HEADER))
@@ -14,11 +25,7 @@ def main():
 
     clock = pygame.time.Clock()
 
-    board = Board()
-    board.shuffle(5)
-    moves = 0
-    start_time = pygame.time.get_ticks()
-    time_clear = None
+    board, moves, time_start, time_clear = reset_game()
     while True:
         screen.fill((0,0,0))
 
@@ -39,7 +46,7 @@ def main():
         screen.blit(text_moves, text_rect)
 
 
-        time_passed = (pygame.time.get_ticks()-start_time)//1000        
+        time_passed = (pygame.time.get_ticks()-time_start)//1000        
         
         if board.is_solved():
             text_clear = font.render("CLEAR!", True, (255, 0, 0))
@@ -76,11 +83,7 @@ def main():
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_r:
-                    board = Board()
-                    board.shuffle()
-                    moves = 0
-                    start_time = pygame.time.get_ticks()
-                    time_clear = None
+                    board, moves, time_start, time_clear = reset_game()
         clock.tick(60)
 
 
