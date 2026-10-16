@@ -19,11 +19,12 @@ def pos_topleft(i):
 
 def reset_game():
     board = Board()
-    board.shuffle(1)
+    board.shuffle()
     moves = 0
     time_start = pygame.time.get_ticks()
     time_clear = None
     history_blank = []
+    played_clear_sound = False
     pos_draw = {}
 
     for i in range(16):
@@ -31,7 +32,7 @@ def reset_game():
         pos_draw[number] = list(pos_topleft(i))
 
 
-    return board, moves, time_start, time_clear, history_blank, pos_draw
+    return board, moves, time_start, time_clear, history_blank, pos_draw, played_clear_sound
 
 
 def main():
@@ -47,10 +48,11 @@ def main():
 
     clock = pygame.time.Clock()
 
-    board, moves, time_start, time_clear, history_blank, pos_draw = reset_game()
+    board, moves, time_start, time_clear, history_blank, pos_draw ,played_clear_sound= reset_game()
     
     while True:
         screen.fill((0,0,0))
+        tiles_stopped = True
 
         for i in range(16):
             number = board.tiles[i]
@@ -65,6 +67,8 @@ def main():
 
                 if abs(x_goal - x_draw) < 1 : x_draw = x_goal
                 if abs(y_goal - y_draw) < 1 : y_draw = y_goal
+                if x_draw != x_goal or y_draw != y_goal:
+                    tiles_stopped = False
 
                 pos_draw[number] = [x_draw, y_draw]
 
@@ -82,13 +86,16 @@ def main():
         time_passed = (pygame.time.get_ticks()-time_start)//1000        
         
         if board.is_solved():
-            text_clear = font.render("CLEAR!", True, (255, 0, 0))
-            text_clear_rect = text_clear.get_rect(center = (WINDOW_SIZE//2,HEADER+WINDOW_SIZE//2))
-            screen.blit(text_clear, text_clear_rect)
-
             if time_clear is None:
                 time_clear = time_passed
-                sound_clear.play()
+            if tiles_stopped:
+                text_clear = font.render("CLEAR!", True, (255, 0, 0))
+                text_clear_rect = text_clear.get_rect(center = (WINDOW_SIZE//2,HEADER+WINDOW_SIZE//2))
+                screen.blit(text_clear, text_clear_rect)
+
+                if not played_clear_sound :            
+                    sound_clear.play()
+                    played_clear_sound = True
 
         if time_clear is None:
             text_time = font.render(f"time:{time_passed}", True, (255, 255, 255))
@@ -120,7 +127,7 @@ def main():
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_r:
-                    board, moves, time_start, time_clear, history_blank, pos_draw = reset_game()
+                    board, moves, time_start, time_clear, history_blank, pos_draw, played_clear_sound = reset_game()
                 
                 if time_clear is None:
                     if event.key == pygame.K_z:
