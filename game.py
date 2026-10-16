@@ -18,6 +18,7 @@ def main():
     board.shuffle(5)
     moves = 0
     start_time = pygame.time.get_ticks()
+    time_clear = None
     while True:
         screen.fill((0,0,0))
 
@@ -37,15 +38,24 @@ def main():
         text_rect = text_moves.get_rect(midleft = (10, HEADER // 2))
         screen.blit(text_moves, text_rect)
 
-        time_passed = (pygame.time.get_ticks()-start_time)//1000
-        text_time = font.render(f"time:{time_passed}", True, (255, 255, 255))
-        text_rect = text_time.get_rect(midright = (WINDOW_SIZE - 10, HEADER//2))
-        screen.blit(text_time, text_rect)
+
+        time_passed = (pygame.time.get_ticks()-start_time)//1000        
         
         if board.is_solved():
             text_clear = font.render("CLEAR!", True, (255, 0, 0))
             text_clear_rect = text_clear.get_rect(center = (WINDOW_SIZE//2,HEADER+WINDOW_SIZE//2))
             screen.blit(text_clear, text_clear_rect)
+
+            if time_clear is None:
+                time_clear = time_passed
+
+        if time_clear is None:
+            text_time = font.render(f"time:{time_passed}", True, (255, 255, 255))
+        else :
+            text_time = font.render(f"time:{time_clear}", True, (255, 255, 255))
+
+        text_rect = text_time.get_rect(midright = (WINDOW_SIZE - 10, HEADER//2))
+        screen.blit(text_time, text_rect)
     
         pygame.display.update()
 
@@ -54,14 +64,23 @@ def main():
                 pygame.quit()
                 sys.exit()
 
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if event.button == 1:
-                    if event.pos[1] >= HEADER:
-                        row_select = (event.pos[1]-HEADER) // TILE_SIZE
-                        column_select = event.pos[0] // TILE_SIZE
-                        index_select = 4 * row_select + column_select
-                        if board.move(index_select):
-                            moves += 1
+            if time_clear is None:
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if event.button == 1:
+                        if event.pos[1] >= HEADER:
+                            row_select = (event.pos[1]-HEADER) // TILE_SIZE
+                            column_select = event.pos[0] // TILE_SIZE
+                            index_select = 4 * row_select + column_select
+                            if board.move(index_select):
+                                moves += 1
+
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_r:
+                    board = Board()
+                    board.shuffle()
+                    moves = 0
+                    start_time = pygame.time.get_ticks()
+                    time_clear = None
         clock.tick(60)
 
 
