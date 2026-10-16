@@ -17,6 +17,7 @@ def main():
     board = Board()
     board.shuffle(5)
     moves = 0
+    start_time = pygame.time.get_ticks()
     while True:
         screen.fill((0,0,0))
 
@@ -33,8 +34,14 @@ def main():
                 screen.blit(text, text_rect)
 
         text_moves = font.render(f"moves:{moves}", True, (255, 255, 255))
-        screen.blit(text_moves, (0,0))
+        text_rect = text_moves.get_rect(midleft = (10, HEADER // 2))
+        screen.blit(text_moves, text_rect)
 
+        time_passed = (pygame.time.get_ticks()-start_time)//1000
+        text_time = font.render(f"time:{time_passed}", True, (255, 255, 255))
+        text_rect = text_time.get_rect(midright = (WINDOW_SIZE - 10, HEADER//2))
+        screen.blit(text_time, text_rect)
+        
         if board.is_solved():
             text_clear = font.render("CLEAR!", True, (255, 0, 0))
             text_clear_rect = text_clear.get_rect(center = (WINDOW_SIZE//2,HEADER+WINDOW_SIZE//2))
