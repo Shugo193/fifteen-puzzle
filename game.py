@@ -13,8 +13,9 @@ def reset_game():
     moves = 0
     time_start = pygame.time.get_ticks()
     time_clear = None
+    history_blank = []
 
-    return board, moves, time_start, time_clear
+    return board, moves, time_start, time_clear, history_blank
 
 
 def main():
@@ -25,7 +26,8 @@ def main():
 
     clock = pygame.time.Clock()
 
-    board, moves, time_start, time_clear = reset_game()
+    board, moves, time_start, time_clear, history_blank = reset_game()
+    
     while True:
         screen.fill((0,0,0))
 
@@ -78,12 +80,20 @@ def main():
                             row_select = (event.pos[1]-HEADER) // TILE_SIZE
                             column_select = event.pos[0] // TILE_SIZE
                             index_select = 4 * row_select + column_select
+                            former_blank = board.find_blank()
                             if board.move(index_select):
+                                history_blank.append(former_blank)
                                 moves += 1
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_r:
-                    board, moves, time_start, time_clear = reset_game()
+                    board, moves, time_start, time_clear, history_blank = reset_game()
+                
+                if time_clear is None:
+                    if event.key == pygame.K_z:
+                        if history_blank:
+                            board.move(history_blank.pop())
+                            moves -= 1
         clock.tick(60)
 
 
