@@ -6,6 +6,14 @@ GAP = 4
 HEADER = 60
 WINDOW_SIZE = TILE_SIZE *4
 
+def pos_topleft(i):
+    row = i // 4
+    column = i % 4
+    x_topleft = TILE_SIZE*column+GAP//2
+    y_topleft = TILE_SIZE*row+GAP//2+HEADER
+
+    return x_topleft, y_topleft
+
 
 def reset_game():
     board = Board()
@@ -14,16 +22,14 @@ def reset_game():
     time_start = pygame.time.get_ticks()
     time_clear = None
     history_blank = []
+    pos_draw = {}
 
-    return board, moves, time_start, time_clear, history_blank
+    for i in range(16):
+        number = board.tiles[i]
+        pos_draw[number] = list(pos_topleft(i))
 
-def pos_topleft(i):
-    row = i // 4
-    column = i % 4
-    x_topleft = TILE_SIZE*column+GAP//2
-    y_topleft = TILE_SIZE*row+GAP//2+HEADER
 
-    return x_topleft, y_topleft
+    return board, moves, time_start, time_clear, history_blank, pos_draw
 
 
 def main():
@@ -34,7 +40,7 @@ def main():
 
     clock = pygame.time.Clock()
 
-    board, moves, time_start, time_clear, history_blank = reset_game()
+    board, moves, time_start, time_clear, history_blank, pos_draw = reset_game()
     
     while True:
         screen.fill((0,0,0))
@@ -43,8 +49,19 @@ def main():
             number = board.tiles[i]
             if number != 0:
                 text = font.render(str(number), True, (0, 0, 0))
-                x,y = pos_topleft(i)
-                rect = pygame.Rect(x,y, TILE_SIZE-GAP, TILE_SIZE-GAP)
+
+                x_goal, y_goal = pos_topleft(i)
+                x_draw, y_draw = pos_draw[number]
+
+                x_draw = x_draw + (x_goal -x_draw) * 0.2
+                y_draw = y_draw + (y_goal -y_draw) * 0.2
+
+                if abs(x_goal - x_draw) < 1 : x_draw = x_goal
+                if abs(y_goal - y_draw) < 1 : y_draw = y_goal
+
+                pos_draw[number] = [x_draw, y_draw]
+
+                rect = pygame.Rect(x_draw,y_draw, TILE_SIZE-GAP, TILE_SIZE-GAP)
                 pygame.draw.rect(screen, (255,255,255), rect)
 
                 text_rect = text.get_rect(center = rect.center)
@@ -94,7 +111,7 @@ def main():
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_r:
-                    board, moves, time_start, time_clear, history_blank = reset_game()
+                    board, moves, time_start, time_clear, history_blank, pos_draw = reset_game()
                 
                 if time_clear is None:
                     if event.key == pygame.K_z:
