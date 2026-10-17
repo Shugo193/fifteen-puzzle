@@ -43,8 +43,14 @@ def main():
     sound_clear = pygame.mixer.Sound(ASSETS/"clear.wav")
 
     screen = pygame.display.set_mode((WINDOW_SIZE, WINDOW_SIZE+HEADER))
+    
+    overlay_clear = pygame.Surface((WINDOW_SIZE, WINDOW_SIZE))
+    overlay_clear.fill((0,0,0))
+    overlay_clear.set_alpha(150)
+
     pygame.display.set_caption("fifteen-puzzle")
     font = pygame.font.SysFont(None, 50)
+    font_sub = pygame.font.SysFont(None, 36)
 
     clock = pygame.time.Clock()
 
@@ -89,9 +95,16 @@ def main():
             if time_clear is None:
                 time_clear = time_passed
             if tiles_stopped:
+
+                screen.blit(overlay_clear,(0, HEADER))
+
                 text_clear = font.render("CLEAR!", True, (255, 0, 0))
                 text_clear_rect = text_clear.get_rect(center = (WINDOW_SIZE//2,HEADER+WINDOW_SIZE//2))
                 screen.blit(text_clear, text_clear_rect)
+
+                text_result = font_sub.render(f"moves:{moves}, time:{time_clear}", True, (255, 255, 255))
+                text_result_rect = text_result.get_rect(midtop = (text_clear_rect.centerx, text_clear_rect.bottom + 10))
+                screen.blit(text_result, text_result_rect)
 
                 if not played_clear_sound :            
                     sound_clear.play()
