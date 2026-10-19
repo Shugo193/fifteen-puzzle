@@ -46,4 +46,22 @@ class Board:
             if self.move(index_move):
                 index_former_blank = index_blank
                 count += 1        
-                
+
+
+    def neighbors(self):
+        boards_available = []
+        index_blank = self.find_blank()
+        for i in range(16):
+            if not self.is_adjacent(i):
+                continue
+
+            tiles_copy = list(self.tiles)
+            tiles_copy[i], tiles_copy[index_blank] = tiles_copy[index_blank], tiles_copy[i]
+
+            boards_available.append([i,tuple(tiles_copy)])
+
+        return boards_available
+
+board = Board()
+print(board.neighbors())
+print(board.tiles)

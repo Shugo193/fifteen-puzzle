@@ -42,7 +42,25 @@ def test_shuffle():
             complete = False
 
     assert complete
-        
+
+def test_neighbors_solved():
+    board = Board()
+    neighbors = board.neighbors()
+
+    indexes = {i for i, tiles in neighbors}
+
+    assert len(neighbors) == 2
+    assert board.tiles == list(range(1,16)) + [0]
+    assert indexes == {11, 14}
+
+def test_neighbors_innerindex():
+    board = Board()
+    board.tiles[15], board.tiles[5] = board.tiles[5], board.tiles[15]
+    neighbors = board.neighbors()
+    indexes = {i for i, tiles in neighbors}
+
+    assert len(neighbors) == 4
+    assert indexes == {1,4,6,9}
 
 
 
