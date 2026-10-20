@@ -1,4 +1,5 @@
 from puzzle.board import Board, SOLVED, is_adjacent, neighbors, distance
+from puzzle.solver import solve
 
 def test_new_board_is_solved():
     board = Board()
@@ -74,4 +75,29 @@ def test_distance_moved():
     assert distance(board.tiles) == 1
 
 
+def test_solver_solved():
+    board = Board()
+    process = solve(board.tiles)
 
+    assert process == []
+
+def test_solver_1stepmoved():
+    board = Board()
+    board.move(14)
+    process = solve(board.tiles)
+
+    assert process == [15]
+
+def test_solver_shuffle():
+    shuffle = 10
+    for _ in range(10):
+        board = Board()
+        board.shuffle(shuffle)
+
+        process = solve(board.tiles)
+
+        for i in process:
+            assert board.move(i)
+
+        assert board.tiles == SOLVED
+        assert len(process) <= shuffle
