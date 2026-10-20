@@ -1,4 +1,4 @@
-from puzzle.board import Board, SOLVED
+from puzzle.board import Board, SOLVED, is_adjacent, neighbors, distance
 
 def test_new_board_is_solved():
     board = Board()
@@ -8,10 +8,10 @@ def test_new_board_is_solved():
 def test_is_adjacent_not_across_rows():
     board = Board()
     board.tiles[15], board.tiles[4] = board.tiles[4], board.tiles[15]
-    assert not board.is_adjacent(3)
-    assert board.is_adjacent(0)
-    assert board.is_adjacent(5)
-    assert board.is_adjacent(8)
+    assert not is_adjacent(board.tiles, 3)
+    assert is_adjacent(board.tiles, 0)
+    assert is_adjacent(board.tiles, 5)
+    assert is_adjacent(board.tiles, 8)
 
 
 def test_move_passed():
@@ -45,22 +45,33 @@ def test_shuffle():
 
 def test_neighbors_solved():
     board = Board()
-    neighbors = board.neighbors()
+    result = neighbors(board.tiles)
 
-    indexes = {i for i, tiles in neighbors}
+    indexes = {i for i, tiles in result}
 
-    assert len(neighbors) == 2
+    assert len(result) == 2
     assert board.tiles == list(range(1,16)) + [0]
     assert indexes == {11, 14}
 
 def test_neighbors_innerindex():
     board = Board()
     board.tiles[15], board.tiles[5] = board.tiles[5], board.tiles[15]
-    neighbors = board.neighbors()
-    indexes = {i for i, tiles in neighbors}
+    result = neighbors(board.tiles)
+    indexes = {i for i, tiles in result}
 
-    assert len(neighbors) == 4
+    assert len(result) == 4
     assert indexes == {1,4,6,9}
+
+
+def test_distance_solved():
+    board = Board()
+    assert distance(board.tiles) == 0
+
+
+def test_distance_moved():
+    board = Board()
+    board.move(14)
+    assert distance(board.tiles) == 1
 
 
 
