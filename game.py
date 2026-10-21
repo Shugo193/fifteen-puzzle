@@ -7,7 +7,8 @@ ASSETS = Path(__file__).parent/"assets"
 TILE_SIZE = 100
 GAP = 4
 HEADER = 60
-WINDOW_SIZE = TILE_SIZE *4
+FOOTER = 30
+WINDOW_SIZE = TILE_SIZE *4 
 
 def pos_topleft(i):
     row = i // 4
@@ -43,7 +44,7 @@ def main():
     sound_undo = pygame.mixer.Sound(ASSETS/"undo.wav")
     sound_clear = pygame.mixer.Sound(ASSETS/"clear.wav")
 
-    screen = pygame.display.set_mode((WINDOW_SIZE, WINDOW_SIZE+HEADER))
+    screen = pygame.display.set_mode((WINDOW_SIZE, WINDOW_SIZE+HEADER+FOOTER))
     
     overlay_clear = pygame.Surface((WINDOW_SIZE, WINDOW_SIZE))
     overlay_clear.fill((0,0,0))
@@ -52,6 +53,9 @@ def main():
     pygame.display.set_caption("fifteen-puzzle")
     font = pygame.font.SysFont(None, 50)
     font_sub = pygame.font.SysFont(None, 36)
+    font_footer = pygame.font.SysFont(None, 22)
+    text_desc = font_footer.render(f"R: restart  Z: undo  H: hint", True, (150, 150, 150))
+
 
     clock = pygame.time.Clock()
 
@@ -96,6 +100,9 @@ def main():
         text_rect = text_moves.get_rect(midleft = (10, HEADER // 2))
         screen.blit(text_moves, text_rect)
 
+        text_rect = text_desc.get_rect(midleft = (10, WINDOW_SIZE+HEADER+FOOTER // 2))
+        screen.blit(text_desc, text_rect)
+
 
         time_passed = (pygame.time.get_ticks()-time_start)//1000        
         
@@ -136,7 +143,7 @@ def main():
             if time_clear is None:
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if event.button == 1:
-                        if event.pos[1] >= HEADER:
+                        if HEADER <=  event.pos[1] < WINDOW_SIZE + HEADER:
                             row_select = (event.pos[1]-HEADER) // TILE_SIZE
                             column_select = event.pos[0] // TILE_SIZE
                             index_select = 4 * row_select + column_select
