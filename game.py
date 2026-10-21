@@ -1,6 +1,7 @@
 import pygame
 import sys
 from puzzle.board import Board
+from puzzle.solver import solve
 from pathlib import Path
 ASSETS = Path(__file__).parent/"assets"
 TILE_SIZE = 100
@@ -55,7 +56,8 @@ def main():
     clock = pygame.time.Clock()
 
     board, moves, time_start, time_clear, history_blank, pos_draw ,played_clear_sound= reset_game()
-    
+
+    hint_index = None
     while True:
         screen.fill((0,0,0))
         tiles_stopped = True
@@ -78,11 +80,17 @@ def main():
 
                 pos_draw[number] = [x_draw, y_draw]
 
-                rect = pygame.Rect(x_draw,y_draw, TILE_SIZE-GAP, TILE_SIZE-GAP)
-                pygame.draw.rect(screen, (255,255,255), rect)
+                
+                if hint_index == i :
+                    color_rect = (255,255,0)
+                else :
+                    color_rect = (255,255,255)
 
+                rect = pygame.Rect(x_draw,y_draw, TILE_SIZE-GAP, TILE_SIZE-GAP)
+                pygame.draw.rect(screen, color_rect, rect)
                 text_rect = text.get_rect(center = rect.center)
                 screen.blit(text, text_rect)
+                
 
         text_moves = font.render(f"moves:{moves}", True, (255, 255, 255))
         text_rect = text_moves.get_rect(midleft = (10, HEADER // 2))
@@ -137,17 +145,25 @@ def main():
                                 sound_slide.play()
                                 history_blank.append(former_blank)
                                 moves += 1
+                                hint_index = None
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_r:
-                    board, moves, time_start, time_clear, history_blank, pos_draw, played_clear_sound = reset_game()
-                
+                    board, moves, time_start, time_clear, history_blank, pos_draw, played_clear_sound = reset_game()                
+                    hint_index = None
                 if time_clear is None:
+                    if event.key == pygame.K_h:
+                        result = solve(board.tiles, 2)
+                        if result:
+                            hint_index = result[0]
+
+
                     if event.key == pygame.K_z:
                         if history_blank:
                             sound_undo.play()
                             board.move(history_blank.pop())
                             moves -= 1
+                            hint_index = None
         clock.tick(60)
 
 
